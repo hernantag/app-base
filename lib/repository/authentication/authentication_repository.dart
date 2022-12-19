@@ -14,7 +14,12 @@ class AuthenticationRepository {
   logIn() async {
     Future.delayed(Duration(seconds: 1));
 
-    print("entrando");
     controller.add("Authenticated");
+  }
+
+  logOut() async {
+    Future.delayed(Duration(seconds: 1));
+
+    controller.add("Unauthenticated");
   }
 }

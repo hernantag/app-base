@@ -30,8 +30,8 @@ class LoginScreen extends StatelessWidget {
           Text(
               "el usuario es :${state.username.value} ,la contraseña: ${state.password.value}, validez: ${state.status.toString()}"),
           ElevatedButton(
-              onPressed: () {
-                RepositoryProvider.of<AuthenticationRepository>(context)
+              onPressed: () async {
+                await RepositoryProvider.of<AuthenticationRepository>(context)
                     .logIn();
               },
               child: Text("Login"))

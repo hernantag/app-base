@@ -19,8 +19,12 @@ class AppRouter {
         name: "login",
         redirect: (context, state) {
           bool isLogged =
-              context.watch<AuthenticationBloc>().state is Authenticated;
-          if (isLogged) return "/";
+              context.read<AuthenticationBloc>().state is Authenticated;
+
+          if (isLogged) {
+            print("Esstá autenticado, hay que redireccionar");
+            return "/";
+          }
         },
       ),
       GoRoute(
@@ -36,10 +40,8 @@ class AppRouter {
       )
     ],
     redirect: (context, state) {
-      print("pasamos por aqui");
       bool isLogged = context.read<AuthenticationBloc>().state is Authenticated;
 
-      print(isLogged);
       if (!isLogged) return "/login";
     },
   );

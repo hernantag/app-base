@@ -1,7 +1,11 @@
+import 'package:app_base_v0/app/authentication/bloc/bloc_authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../repository/authentication/authentication_repository.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -17,8 +21,14 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
+              onPressed: () async {
+                await RepositoryProvider.of<AuthenticationRepository>(context)
+                    .logOut();
+              },
+              child: Text("logout")),
+          ElevatedButton(
               onPressed: () {
-                context.go("/test");
+                GoRouter.of(context).go('/login');
               },
               child: Text("xd"))
         ],
