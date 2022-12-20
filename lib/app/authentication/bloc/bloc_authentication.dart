@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app_base_v0/app/authentication/bloc/state_authentication.dart';
-import 'package:app_base_v0/app/login/bloc/event_login.dart';
 import 'package:app_base_v0/repository/authentication/authentication_repository.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,20 +10,19 @@ import 'event_authentication.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc(AuthenticationRepository authenticationRepository)
-      : super(Unknown()) {
+  AuthenticationBloc(
+      {required AuthenticationRepository authenticationRepository,
+      String? state})
+      : super(state != null ? Authenticated(token: state) : Unknown()) {
     on<StatusChanged>(_onStatusChange);
-    on<LogoutRequest>(_logoutRequest, transformer: sequential());
+    on<LogoutRequest>(_logoutRequest, transformer: droppable());
+
     statusSubscription = authenticationRepository.status().listen((event) {
       return add(StatusChanged(status: event));
     });
   }
 
   late final StreamSubscription statusSubscription;
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 
   _onStatusChange(StatusChanged event, Emitter<dynamic> emit) async {
     switch (event.status) {
@@ -35,7 +33,7 @@ class AuthenticationBloc
         }
       case "Authenticated":
         {
-          emit(Authenticated(user: User(id: "123")));
+          emit(Authenticated(token: event.status));
           break;
         }
       case "Unknown":
@@ -44,9 +42,23 @@ class AuthenticationBloc
           break;
         }
       default:
-        print("ninguno ");
+        emit(Unknown());
     }
   }
 
   _logoutRequest(LogoutRequest event, Emitter<dynamic> emitter) async {}
+
+  @override
+  void onChange(Change<AuthenticationState> change) {
+    super.onChange(change);
+    if (change.nextState is Authenticated) {
+      final algo = change.nextState as Authenticated;
+      print(algo.token);
+    }
+  }
+
+  @override
+  Future<void> close() {
+    return super.close();
+  }
 }
